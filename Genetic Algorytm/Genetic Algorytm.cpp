@@ -2,34 +2,33 @@
 //
 
 #include "stdafx.h"
-#include <iostream>					// для cout и т.п.
-#include <vector>					// для класса vector
-#include <string>					// для класса string
-#include <algorithm>					// для алгоритма сортировки
-#include <time.h>					// для случайных величин
+#include <iostream>					// for enter from the screen
+#include <vector>					// for class vector
+#include <string>					// for class string
+#include <algorithm>				// for sort algorithm
+#include <time.h>					// for randomize
 #include <math.h>
 
-#define GA_POPSIZE		2048		// размер популяции
-#define GA_MAXITER		16384		// максимальное число итераций
-#define GA_ELITRATE		0.10f		// элитарность
-#define GA_MUTATIONRATE	0.25f			// мутации
-#define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE
-#define GA_TARGET		std::string("")
+#define GA_POPSIZE		2048		// size of population
+#define GA_MAXITER		16384		// maximum numbers of iteration
+#define GA_ELITRATE		0.10f		// elitarizm
+#define GA_MUTATIONRATE	0.25f		// chance for mutation
+#define GA_MUTATION		RAND_MAX * GA_MUTATIONRATE  //mutation
+#define GA_TARGET		std::string("Hello!")  //word which we want to generate 
 
 using namespace std;
 
 struct ga_struct
 {
-	string str;						// строка
-	unsigned int fitness;					// пригодность
+	string str;								// cap say: "String!"
+	unsigned int fitness;					// fitness function, or function which generate chance to mutation
 };
 
-typedef vector<ga_struct> ga_vector;			// для краткости
+typedef vector<ga_struct> ga_vector;			//definition of vector by structure
 
-void init_population(ga_vector &population,
-	ga_vector &buffer)
+void init_population(ga_vector &population, ga_vector &buffer) //initialization of start population
 {
-	int tsize = GA_TARGET.size();
+	int tsize = GA_TARGET.size(); //we use a global variable. We define them on line 12. Our population write to the vector
 
 	for (int i = 0; i<GA_POPSIZE; i++) {
 		ga_struct citizen;
@@ -43,10 +42,10 @@ void init_population(ga_vector &population,
 		population.push_back(citizen);
 	}
 
-	buffer.resize(GA_POPSIZE);
+	buffer.resize(GA_POPSIZE); //to economy of memory, we resize global variable and set the size of our population
 }
 
-void calc_fitness(ga_vector &population)
+void calc_fitness(ga_vector &population)  //calculation of fitness. You can see the definition of fitness function in the .doc file. 
 {
 	string target = GA_TARGET;
 	int tsize = target.size();
@@ -55,14 +54,14 @@ void calc_fitness(ga_vector &population)
 	for (int i = 0; i<GA_POPSIZE; i++) {
 		fitness = 0;
 		for (int j = 0; j<tsize; j++) {
-			fitness += abs(int(population[i].str[j] - target[j]));
+			fitness += abs(int(population[i].str[j] - target[j])); 
 		}
 
 		population[i].fitness = fitness;
 	}
 }
 
-bool fitness_sort(ga_struct x, ga_struct y)
+bool fitness_sort(ga_struct x, ga_struct y) //sort of new generation
 {
 	return (x.fitness < y.fitness);
 }
@@ -135,14 +134,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	buffer = &pop_beta;
 
 	for (int i = 0; i<GA_MAXITER; i++) {
-		calc_fitness(*population);		// вычисляем пригодность
-		sort_by_fitness(*population);		// сортируем популяцию
-		print_best(*population);		// выводим лучшую популяцию
+		calc_fitness(*population);		// calc fitness
+		sort_by_fitness(*population);		// sort population
+		print_best(*population);		// print pest population
 
 		if ((*population)[0].fitness == 0) break;
 
-		mate(*population, *buffer);		// спариваем популяции
-		swap(population, buffer);		// очищаем буферы
+		mate(*population, *buffer);		// generation of next generation of population
+		swap(population, buffer);		// clear buffers
 	}
 	system("pause");
 	return 0;
